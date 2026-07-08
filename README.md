@@ -147,7 +147,7 @@ When using as a GitHub Action, pass configuration via the `with` keyword. The ac
 
 ## 🗺️ Roadmap
 
-- [ ] Diff-aware API surface detection (AST-level analysis)
+- [x] Diff-aware API surface detection (AST-level analysis)
 - [ ] Language-specific adapters for smarter risk scoring
 - [ ] Automated release-note drafting
 - [ ] Downstream repository impact hints

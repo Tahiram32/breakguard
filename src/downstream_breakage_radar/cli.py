@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from downstream_breakage_radar import diff_analyzer, reporter, scanner
+from downstream_breakage_radar import ast_analyzer, diff_analyzer, reporter, scanner
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -39,6 +39,7 @@ def main() -> int:
 
     findings = scanner.detect_risk(changed_files)
     findings.extend(diff_analyzer.analyze_diff(diff_text, deleted_files))
+    findings.extend(ast_analyzer.analyze_python_ast(repo_path, changed_files, args.base))
 
     report = scanner.summarize(findings, changed_files)
 
