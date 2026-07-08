@@ -58,9 +58,67 @@ from downstream_breakage_radar.ast_analyzer import analyze_python_ast
 
 class AstAnalyzerTests(unittest.TestCase):
     def test_removed_ast_function(self) -> None:
-        # We can mock _get_file_content_at_ref or write real files to test the AST logic
-        # Actually a unit test can just verify ast logic directly, but let's do a simple check
         pass
+
+class GoAnalyzerTests(unittest.TestCase):
+    def test_extract_go_symbols(self) -> None:
+        from downstream_breakage_radar.go_analyzer import extract_go_symbols
+        content = """
+        package main
+        // Exported function
+        func Hello() string { return "world" }
+        // Internal function
+        func internal() {}
+        // Exported type
+        type Config struct {}
+        """
+        symbols = extract_go_symbols(content)
+        self.assertIn("func:Hello", symbols)
+        self.assertIn("type:Config", symbols)
+        self.assertNotIn("func:internal", symbols)
+
+class JsTsAnalyzerTests(unittest.TestCase):
+    def test_extract_js_ts_symbols(self) -> None:
+        from downstream_breakage_radar.ts_analyzer import extract_js_ts_symbols
+        content = """
+        export function compute(x, y) { return x + y; }
+        export class Client {}
+        export const API_URL = "http://api";
+        function local() {}
+        """
+        symbols = extract_js_ts_symbols(content)
+        self.assertIn("func:compute", symbols)
+        self.assertIn("class:Client", symbols)
+        self.assertIn("const:API_URL", symbols)
+        self.assertNotIn("func:local", symbols)
+
+class DependencyDetectorTests(unittest.TestCase):
+    def test_parse_requirements_txt(self) -> None:
+        from downstream_breakage_radar.dependency_detector import parse_requirements_txt
+        content = """
+        requests>=2.0.0
+        numpy==1.22
+        # comment
+        scipy
+        """
+        deps = parse_requirements_txt(content)
+        self.assertIn("requests", deps)
+        self.assertIn("numpy", deps)
+        self.assertIn("scipy", deps)
+
+    def test_parse_package_json_deps(self) -> None:
+        from downstream_breakage_radar.dependency_detector import parse_package_json_deps
+        content = """{
+            "dependencies": {
+                "react": "^18.0.0"
+            },
+            "devDependencies": {
+                "typescript": "^5.0.0"
+            }
+        }"""
+        deps = parse_package_json_deps(content)
+        self.assertIn("react", deps)
+        self.assertIn("typescript", deps)
 
 if __name__ == "__main__":
     unittest.main()

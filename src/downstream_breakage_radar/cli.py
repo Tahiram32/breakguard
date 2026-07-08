@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from downstream_breakage_radar import ast_analyzer, diff_analyzer, reporter, scanner
+from downstream_breakage_radar import ast_analyzer, dependency_detector, diff_analyzer, go_analyzer, reporter, scanner, ts_analyzer
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -59,8 +59,18 @@ def main() -> int:
     findings = scanner.detect_risk(changed_files)
     findings.extend(diff_analyzer.analyze_diff(diff_text, deleted_files))
     findings.extend(ast_analyzer.analyze_python_ast(repo_path, changed_files, args.base))
+    findings.extend(go_analyzer.analyze_go(repo_path, changed_files, args.base))
+    findings.extend(ts_analyzer.analyze_js_ts(repo_path, changed_files, args.base))
+    findings.extend(dependency_detector.analyze_dependencies(repo_path, ignore_patterns))
 
     report = scanner.summarize(findings, changed_files, repo_path)
+
+    # Save SVG badge
+    try:
+        badge_content = reporter.generate_badge(str(report["risk_level"]))
+        (repo_path / "breakage-radar-badge.svg").write_text(badge_content, encoding="utf-8")
+    except Exception as e:
+        print(f"Warning: Failed to generate SVG badge: {e}", file=sys.stderr)
 
     # Output
     if args.format == "json":

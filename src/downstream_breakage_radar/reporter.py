@@ -131,3 +131,31 @@ def format_github(report: dict[str, Any]) -> str:
         lines.append(f"::{cmd} file={path},title={title}::{note}")
         
     return "\n".join(lines)
+
+
+def generate_badge(risk_level: str) -> str:
+    """Generate SVG badge content based on the risk level."""
+    colors = {
+        "none": "#22c55e",
+        "low": "#3b82f6",
+        "medium": "#eab308",
+        "high": "#ef4444",
+    }
+    color = colors.get(risk_level.lower(), "#555")
+    label = risk_level.capitalize()
+    
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20">
+  <linearGradient id="b" lg="90"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient>
+  <mask id="a"><rect width="130" height="20" rx="3" fill="#fff"/></mask>
+  <g mask="url(#a)">
+    <rect width="80" height="20" fill="#555"/>
+    <rect x="80" width="50" height="20" fill="{color}"/>
+    <rect width="130" height="20" fill="url(#b)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+    <text x="40" y="15" fill="#010101" fill-opacity=".3">Breakage Risk</text>
+    <text x="40" y="14">Breakage Risk</text>
+    <text x="105" y="15" fill="#010101" fill-opacity=".3">{label}</text>
+    <text x="105" y="14">{label}</text>
+  </g>
+</svg>"""

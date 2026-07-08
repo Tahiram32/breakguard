@@ -28,9 +28,11 @@ No external dependencies. No complex setup. Just add it to your workflow and shi
 - 🔍 **Automatic surface detection** — flags changes to `src/`, `lib/`, `api/`, `schemas/`, `proto/`, OpenAPI specs, and more
 - 📦 **Package manifest awareness** — catches edits to `pyproject.toml`, `package.json`, `Cargo.toml`, `go.mod`, `pom.xml`, etc.
 - 📝 **Migration notes** — every finding includes a human-readable note explaining what to review
-- 🎯 **Risk scoring** — summarizes overall risk level (`none` / `low` / `medium`) at a glance
+- 🎯 **Risk scoring** — summarizes overall risk level (`none` / `low` / `medium` / `high`) at a glance
+- 🚨 **Dependency Mismatch Detection** — automatically flags missing imports (critical) or declared-but-unused packages in manifests
+- 📊 **Custom SVG Badges** — generates a clean `breakage-radar-badge.svg` representing the overall risk level for your PRs
 - 🖥️ **Dual mode** — runs as a GitHub Action in CI *or* locally as a CLI
-- 📊 **Multiple output formats** — plain text for humans, JSON for tooling
+- 📊 **Multiple output formats** — plain text, JSON, markdown PR comments, or GitHub Actions annotations
 - 🪶 **Zero dependencies** — pure Python, nothing to install beyond the standard library
 
 ## 🚀 Quick Start
@@ -154,7 +156,7 @@ When using as a GitHub Action, pass configuration via the `with` keyword. The ac
 ## 🗺️ Roadmap
 
 - [x] Diff-aware API surface detection (AST-level analysis)
-- [x] Language-specific adapters for smarter risk scoring (Python added)
+- [x] Language-specific adapters for smarter risk scoring (Python, Go, JS/TS)
 - [x] Automated release-note drafting
 - [x] Downstream repository impact hints
 - [x] `fail-on` threshold to block PRs above a risk level
