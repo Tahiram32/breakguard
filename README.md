@@ -54,8 +54,11 @@ on:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -65,19 +68,26 @@ jobs:
           base-ref: origin/main
           format: markdown
           fail-on: high
+          changelog: true
 ```
 
 ### As a CLI
 
 ```bash
-# Install from source
-pip install git+https://github.com/Tahiram32/downstream-breakage-radar.git
+# Install from PyPI
+pip install downstream-breakage-radar
 
 # Scan the current repo against origin/main
 breakage-radar --repo . --base origin/main
 
 # Get JSON output for CI tooling
 breakage-radar --repo . --base origin/main --format json
+
+# Generate an API changelog
+breakage-radar --repo . --base origin/main --changelog
+
+# Export SARIF for GitHub Code Scanning
+breakage-radar --repo . --base origin/main --format sarif > results.sarif
 ```
 
 Or run directly as a module:
@@ -135,13 +145,37 @@ Findings: 3
 |-------|---------|-------------|
 | `--repo` | `.` | Path to the Git repository to scan |
 | `--base` | `origin/main` | Base ref to diff against (branch, tag, or commit SHA) |
-| `--format` | `text` | Output format: `text` for human-readable, `json` for machine-readable |
-| `--fail-on` | `high` | The risk level at which to exit with code 1 |
+| `--format` | `text` | Output format: `text`, `json`, `markdown`, `github` (inline annotations), or `sarif` |
+| `--fail-on` | `high` | The risk level at which to exit with code 1 (`none`, `low`, `medium`, `high`) |
 | `--draft-release` | `false` | Automatically draft a GitHub release using the `gh` CLI |
+| `--changelog` | `false` | Generate a markdown API changelog (`breakage-radar-changelog.md`) |
 
 ### Ignore Files
 
 Create a `.breakageignore` file in the root of your repository to specify glob patterns for paths you want the scanner to completely ignore (e.g. `src/internal_scripts/*` or `*_test.py`).
+
+### In-Manifest Configuration
+
+You can configure the tool directly in your `pyproject.toml`:
+
+```toml
+[tool.breakage-radar]
+ignored_paths = ["tests/*", "docs/*"]
+public_dirs = ["api/", "src/public/"]
+severity_overrides = { "Unused Python dependency" = "none" }
+```
+
+Or create a `breakage-radar.json` in the root of your repository:
+
+```json
+{
+  "ignored_paths": ["tests/*", "scripts/*"],
+  "public_dirs": ["api/"],
+  "severity_overrides": {
+    "Unused Python dependency": "none"
+  }
+}
+```
 
 ### GitHub Action inputs
 
@@ -150,12 +184,14 @@ When using as a GitHub Action, pass configuration via the `with` keyword. The ac
 ## 🔬 How It Works
 
 1. **Diff** — runs `git diff --name-only <base-ref>...HEAD` to get the list of changed files
-2. **Classify** — checks each path against known risky patterns:
-   - **Path markers**: `src/`, `lib/`, `app/`, `api/`, `public/`, `include/`, `internal/`, `pkg/`, `schemas/`, `proto/`, `openapi`
-   - **Package manifests**: `pyproject.toml`, `package.json`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`, and more
-   - **Source extensions**: `.py`, `.ts`, `.js`, `.go`, `.rs`, `.java`, `.kt`, `.cs`
-3. **Score** — assigns severity (`low` for source changes, `medium` for public surface / manifest changes)
-4. **Report** — generates a summary with per-file findings and plain-English migration notes
+2. **Multi-Language AST Analysis** — deeply parses:
+   - **Python** (`.py`) using the `ast` module — detects removed/renamed functions, deleted classes, changed argument signatures, and deprecation status
+   - **Go** (`.go`) — detects removed exported functions, methods, and struct/interface types
+   - **JavaScript/TypeScript** (`.js`, `.ts`, `.jsx`, `.tsx`) — detects removed exported functions, classes, constants, and interfaces
+3. **Deprecation Check** — if a removed symbol was marked `@deprecated` (Python/JS) or `// Deprecated:` (Go), severity is automatically reduced from `high` to `medium`
+4. **Dependency Analysis** — compares declared packages in `pyproject.toml`, `requirements.txt`, or `package.json` against actual imports in code, flagging missing or unused packages
+5. **SemVer Recommendation** — reads your current version from manifests and recommends the correct next version bump (`PATCH`, `MINOR`, or `MAJOR`) based on the overall risk level
+6. **Score & Report** — assigns a final risk level (`none` / `low` / `medium` / `high`) and generates reports in your choice of Text, JSON, Markdown, SARIF, or GitHub Workflow Command annotations
 
 ## 🗺️ Roadmap
 
@@ -181,7 +217,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 Downstream Breakage Radar is free, open-source software maintained in spare time. Sponsorship directly funds:
 
-- 🛠️ **New features** from the roadmap (AST analysis, language adapters, SARIF output)
+- 🛠️ **New features** — new language support, smarter analysis, and deeper integrations
 - 🐛 **Bug fixes and maintenance** to keep the tool reliable
 - 📖 **Documentation and examples** to help more teams adopt it
 - 🌍 **Community support** — answering issues, reviewing PRs, and growing the ecosystem
