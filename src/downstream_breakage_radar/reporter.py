@@ -40,6 +40,10 @@ def format_text(report: dict[str, Any]) -> str:
         f"Changed files: {report['change_count']}",
         f"Findings: {report['finding_count']}",
     ]
+    if report.get("recommended_version"):
+        lines.append(f"Recommended Bump: {report['recommended_bump'].upper()} (➡️ {report['recommended_version']})")
+    elif report.get("recommended_bump"):
+        lines.append(f"Recommended Bump: {report['recommended_bump'].upper()}")
     for finding in report["findings"]:
         lines.append("")
         lines.append(f"- [{finding['severity']}] {finding['path']}: {finding['message']}")
@@ -73,6 +77,10 @@ def format_markdown(report: dict[str, Any]) -> str:
         f"**Changed files:** {report['change_count']}  ",
         f"**Findings:** {report['finding_count']}",
     ]
+    if report.get("recommended_version"):
+        lines.append(f"**Recommended Bump:** `{report['recommended_bump'].upper()}` (➡️ `{report['recommended_version']}`)  ")
+    elif report.get("recommended_bump"):
+        lines.append(f"**Recommended Bump:** `{report['recommended_bump'].upper()}`  ")
 
     if not report["findings"]:
         lines += ["", "✅ No obvious breakage risks found."]

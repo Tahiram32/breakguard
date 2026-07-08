@@ -24,6 +24,20 @@ class DetectRiskTests(unittest.TestCase):
         self.assertEqual(report["change_count"], 1)
         self.assertEqual(report["risk_level"], "none")
 
+    def test_version_recommendation(self) -> None:
+        from downstream_breakage_radar.scanner import recommend_version_bump
+        bump, version = recommend_version_bump("1.2.3", "high")
+        self.assertEqual(bump, "major")
+        self.assertEqual(version, "2.0.0")
+
+        bump, version = recommend_version_bump("1.2.3", "medium")
+        self.assertEqual(bump, "minor")
+        self.assertEqual(version, "1.3.0")
+
+        bump, version = recommend_version_bump("1.2.3", "low")
+        self.assertEqual(bump, "patch")
+        self.assertEqual(version, "1.2.4")
+
 class DiffAnalyzerTests(unittest.TestCase):
     def test_removed_function(self) -> None:
         diff_text = """diff --git a/src/api.py b/src/api.py

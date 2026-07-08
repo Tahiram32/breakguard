@@ -60,7 +60,7 @@ def main() -> int:
     findings.extend(diff_analyzer.analyze_diff(diff_text, deleted_files))
     findings.extend(ast_analyzer.analyze_python_ast(repo_path, changed_files, args.base))
 
-    report = scanner.summarize(findings, changed_files)
+    report = scanner.summarize(findings, changed_files, repo_path)
 
     # Output
     if args.format == "json":

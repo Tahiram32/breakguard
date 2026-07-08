@@ -151,11 +151,78 @@ def detect_risk(changed_files: Iterable[str]) -> list[Finding]:
     return findings
 
 
+def find_current_version(repo_path: Path) -> str | None:
+    """Attempt to find the current version from common manifests."""
+    # Try pyproject.toml
+    pyproject = repo_path / "pyproject.toml"
+    if pyproject.exists():
+        try:
+            content = pyproject.read_text(encoding="utf-8")
+            match = re.search(r'(?m)^version\s*=\s*["\']([^"\']+)["\']', content)
+            if match:
+                return match.group(1)
+        except Exception:
+            pass
+
+    # Try package.json
+    package_json = repo_path / "package.json"
+    if package_json.exists():
+        import json
+        try:
+            data = json.loads(package_json.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and "version" in data:
+                return str(data["version"])
+        except Exception:
+            pass
+
+    # Try Cargo.toml
+    cargo = repo_path / "Cargo.toml"
+    if cargo.exists():
+        try:
+            content = cargo.read_text(encoding="utf-8")
+            match = re.search(r'(?m)^version\s*=\s*["\']([^"\']+)["\']', content)
+            if match:
+                return match.group(1)
+        except Exception:
+            pass
+
+    return None
+
+
+def recommend_version_bump(current_version: str | None, risk_level: str) -> tuple[str, str]:
+    """Calculate the recommended SemVer bump type and next version string."""
+    if risk_level == "high":
+        bump_type = "major"
+    elif risk_level == "medium":
+        bump_type = "minor"
+    else:
+        bump_type = "patch"
+
+    if not current_version:
+        return bump_type, ""
+
+    parts = current_version.split(".")
+    if len(parts) != 3:
+        return bump_type, ""
+
+    try:
+        major, minor, patch = map(int, parts)
+        if bump_type == "major":
+            new_version = f"{major + 1}.0.0"
+        elif bump_type == "minor":
+            new_version = f"{major}.{minor + 1}.0"
+        else:
+            new_version = f"{major}.{minor}.{patch + 1}"
+        return bump_type, new_version
+    except ValueError:
+        return bump_type, ""
+
+
 # ---------------------------------------------------------------------------
 # Summariser
 # ---------------------------------------------------------------------------
 
-def summarize(findings: list[Finding], changed_files: list[str]) -> dict[str, object]:
+def summarize(findings: list[Finding], changed_files: list[str], repo_path: Path | None = None) -> dict[str, object]:
     """Build a summary dict from a list of findings and changed files."""
 
     highest = "none"
@@ -164,10 +231,21 @@ def summarize(findings: list[Finding], changed_files: list[str]) -> dict[str, ob
         if SEVERITY_ORDER.get(sev, 0) > SEVERITY_ORDER.get(highest, 0):
             highest = sev
 
+    current_version = None
+    bump_type = "patch"
+    recommended_version = ""
+
+    if repo_path:
+        current_version = find_current_version(repo_path)
+        bump_type, recommended_version = recommend_version_bump(current_version, highest)
+
     return {
         "changed_files": changed_files,
         "change_count": len(changed_files),
         "risk_level": highest,
         "finding_count": len(findings),
         "findings": [asdict(finding) for finding in findings],
+        "current_version": current_version,
+        "recommended_bump": bump_type,
+        "recommended_version": recommended_version,
     }
