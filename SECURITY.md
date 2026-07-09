@@ -11,7 +11,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Downstream Breakage Radar, **please do not open a public issue.**
+If you discover a security vulnerability in BreakGuard, **please do not open a public issue.**
 
 Instead, report it privately:
 
@@ -35,7 +35,7 @@ We take all reports seriously. Even though this project has no external dependen
 
 ## Security Considerations
 
-Downstream Breakage Radar:
+BreakGuard:
 
 - **Does not execute any code** from the scanned repository — it only reads file paths from `git diff` output
 - **Has zero external dependencies** — the attack surface from third-party packages is eliminated
@@ -50,4 +50,4 @@ We follow coordinated disclosure. Once a fix is available, we will:
 2. Publish a GitHub Security Advisory
 3. Credit the reporter (with their permission)
 
-Thank you for helping keep Downstream Breakage Radar and its users safe. 🔒
+Thank you for helping keep BreakGuard and its users safe. 🔒

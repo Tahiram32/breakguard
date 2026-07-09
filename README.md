@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📡 Downstream Breakage Radar
+# 📡 BreakGuard
 
 **Detect breaking changes before they break your users.**
 
@@ -19,7 +19,7 @@ A GitHub Action and CLI that scans your pull requests for changes likely to brea
 
 Every library maintainer has lived this nightmare: you merge a PR, cut a release, and within hours your issue tracker fills up with reports from projects that depended on the function you renamed, the config key you removed, or the default you changed.
 
-**Downstream Breakage Radar** catches those risks *before* they reach `main`. It diffs your branch against a base ref, identifies changes that touch public API surfaces and release-critical files, and tells you — in plain English — what downstream users will need to do.
+**BreakGuard** catches those risks *before* they reach `main`. It diffs your branch against a base ref, identifies changes that touch public API surfaces and release-critical files, and tells you — in plain English — what downstream users will need to do.
 
 No external dependencies. No complex setup. Just add it to your workflow and ship with confidence.
 
@@ -37,11 +37,11 @@ No external dependencies. No complex setup. Just add it to your workflow and shi
 - 📝 **Migration notes** — every finding includes a human-readable note explaining what to review
 - 🎯 **Risk scoring** — summarizes overall risk level (`none` / `low` / `medium` / `high`) at a glance
 - 🚨 **Dependency Mismatch Detection** — automatically flags missing imports (critical) or declared-but-unused packages in manifests
-- 📊 **Custom SVG Badges** — generates a clean `breakage-radar-badge.svg` representing the overall risk level for your PRs
+- 📊 **Custom SVG Badges** — generates a clean `breakguard-badge.svg` representing the overall risk level for your PRs
 - ⚠️ **API Deprecation Awareness** — automatically downgrades severity of removals if the code was marked as deprecated first
 - 🛡️ **SARIF Format** — supports standardized SARIF output for GitHub's native Security/Code Scanning dashboard integration
 - 📝 **API Changelog Generator** — generates a clean markdown changelog of all public additions, removals, and changes
-- ⚙️ **In-Manifest Configuration** — manage rules, ignored paths, and custom directories directly inside `pyproject.toml` or `breakage-radar.json`
+- ⚙️ **In-Manifest Configuration** — manage rules, ignored paths, and custom directories directly inside `pyproject.toml` or `breakguard.json`
 - 🖥️ **Dual mode** — runs as a GitHub Action in CI *or* locally as a CLI
 - 📊 **Multiple output formats** — plain text, JSON, markdown PR comments, SARIF, or GitHub Actions annotations
 - 🪶 **Zero dependencies** — pure Python, nothing to install beyond the standard library
@@ -50,7 +50,7 @@ No external dependencies. No complex setup. Just add it to your workflow and shi
 
 ### As a GitHub Action (recommended)
 
-Add this to `.github/workflows/breakage-radar.yml`:
+Add this to `.github/workflows/breakguard.yml`:
 
 ```yaml
 name: Breakage Radar
@@ -100,7 +100,7 @@ breakguard --repo . --base origin/main
 breakguard --repo . --base origin/main --changelog
 
 # Export SARIF for GitHub Code Scanning
-breakage-radar --repo . --base origin/main --format sarif > results.sarif
+breakguard --repo . --base origin/main --format sarif > results.sarif
 ```
 
 Or run directly as a module:
@@ -161,7 +161,7 @@ Findings: 3
 | `--format` | `text` | Output format: `text`, `json`, `markdown`, `github` (inline annotations), or `sarif` |
 | `--fail-on` | `high` | The risk level at which to exit with code 1 (`none`, `low`, `medium`, `high`) |
 | `--draft-release` | `false` | Automatically draft a GitHub release using the `gh` CLI |
-| `--changelog` | `false` | Generate a markdown API changelog (`breakage-radar-changelog.md`) |
+| `--changelog` | `false` | Generate a markdown API changelog (`breakguard-changelog.md`) |
 
 ### Ignore Files
 
@@ -172,13 +172,13 @@ Create a `.breakageignore` file in the root of your repository to specify glob p
 You can configure the tool directly in your `pyproject.toml`:
 
 ```toml
-[tool.breakage-radar]
+[tool.breakguard]
 ignored_paths = ["tests/*", "docs/*"]
 public_dirs = ["api/", "src/public/"]
 severity_overrides = { "Unused Python dependency" = "none" }
 ```
 
-Or create a `breakage-radar.json` in the root of your repository:
+Or create a `breakguard.json` in the root of your repository:
 
 ```json
 {
@@ -228,7 +228,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ## ❤️ Sponsor This Project
 
-Downstream Breakage Radar is free, open-source software maintained in spare time. Sponsorship directly funds:
+BreakGuard is free, open-source software maintained in spare time. Sponsorship directly funds:
 
 - 🛠️ **New features** — new language support, smarter analysis, and deeper integrations
 - 🐛 **Bug fixes and maintenance** to keep the tool reliable

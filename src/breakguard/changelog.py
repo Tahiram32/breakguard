@@ -1,4 +1,4 @@
-"""API Changelog Generator for Downstream Breakage Radar.
+"""API Changelog Generator for BreakGuard.
 
 Extracts symbol changes (added, removed, modified) between base and HEAD
 and formats them as a clean Markdown changelog.

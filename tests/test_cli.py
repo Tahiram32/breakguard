@@ -132,7 +132,7 @@ class ConfigTests(unittest.TestCase):
     def test_parse_config_pyproject(self) -> None:
         from breakguard.config import parse_config
         pyproject_content = """
-        [tool.breakage-radar]
+        [tool.breakguard]
         ignored_paths = ["tests/*", "docs/*"]
         public_dirs = ["api/", "src/public/"]
         severity_overrides = { "Unused Python dependency" = "none", "Removed public class" = "medium" }

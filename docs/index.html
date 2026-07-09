@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Downstream Breakage Radar | Detect API Regressions in CI</title>
+    <title>BreakGuard | Detect API Regressions in CI</title>
     <meta name="description" content="A GitHub Action and CLI that detects breaking API changes before release. Uses AST analysis to generate migration notes and native GitHub inline annotations.">
     <link rel="stylesheet" href="style.css">
     <!-- SEO tags -->
-    <meta property="og:title" content="Downstream Breakage Radar">
+    <meta property="og:title" content="BreakGuard">
     <meta property="og:description" content="Catch API regressions and config drift before merging. AST-based analysis for Python.">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
                     <div class="dot green"></div>
                 </div>
                 <div class="terminal-body">
-                    <div class="terminal-line"><span class="terminal-highlight">$</span> <span class="terminal-command">breakage-radar --repo . --base origin/main</span></div>
+                    <div class="terminal-line"><span class="terminal-highlight">$</span> <span class="terminal-command">breakguard --repo . --base origin/main</span></div>
                     <div class="terminal-line">Scanning for downstream breakage risks...</div>
                     <div class="terminal-line">Parsing Abstract Syntax Trees (AST)...</div>
                     <div class="terminal-error">

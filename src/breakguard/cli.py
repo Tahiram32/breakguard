@@ -31,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--changelog",
         action="store_true",
-        help="Generate a markdown API changelog (breakage-radar-changelog.md).",
+        help="Generate a markdown API changelog (breakguard-changelog.md).",
     )
     parser.add_argument(
         "--auto-fix-downstream",
@@ -117,15 +117,15 @@ def main() -> int:
     if args.changelog:
         try:
             log_content = changelog.generate_changelog(repo_path, changed_files, args.base)
-            (repo_path / "breakage-radar-changelog.md").write_text(log_content, encoding="utf-8")
-            print(f"\nGenerated API changelog: breakage-radar-changelog.md", file=sys.stderr)
+            (repo_path / "breakguard-changelog.md").write_text(log_content, encoding="utf-8")
+            print(f"\nGenerated API changelog: breakguard-changelog.md", file=sys.stderr)
         except Exception as e:
             print(f"\nWarning: Failed to generate changelog: {e}", file=sys.stderr)
 
     # Save SVG badge
     try:
         badge_content = reporter.generate_badge(str(report["risk_level"]))
-        (repo_path / "breakage-radar-badge.svg").write_text(badge_content, encoding="utf-8")
+        (repo_path / "breakguard-badge.svg").write_text(badge_content, encoding="utf-8")
     except Exception as e:
         print(f"Warning: Failed to generate SVG badge: {e}", file=sys.stderr)
 

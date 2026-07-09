@@ -1,4 +1,4 @@
-name: "Downstream Breakage Radar"
+name: "BreakGuard"
 description: "Detects breaking changes before release and generates migration notes."
 author: "Tahiram32"
 branding:
@@ -23,7 +23,7 @@ inputs:
     required: false
     default: "false"
   changelog:
-    description: "Generate a markdown API changelog (breakage-radar-changelog.md)."
+    description: "Generate a markdown API changelog (breakguard-changelog.md)."
     required: false
     default: "false"
 
@@ -44,10 +44,10 @@ runs:
       id: scan
       run: |
         # Generate inline annotations first
-        breakage-radar --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format github --fail-on none
+        breakguard --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format github --fail-on none
         
         # Build command for main report
-        CMD="breakage-radar --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format ${{ inputs.format }} --fail-on ${{ inputs.fail-on }}"
+        CMD="breakguard --repo ${{ github.workspace }} --base ${{ inputs.base-ref }} --format ${{ inputs.format }} --fail-on ${{ inputs.fail-on }}"
         if [ "${{ inputs.draft-release }}" = "true" ]; then
           CMD="$CMD --draft-release"
         fi

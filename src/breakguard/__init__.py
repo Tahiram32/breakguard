@@ -1,4 +1,4 @@
-"""Downstream Breakage Radar."""
+"""BreakGuard."""
 
 __all__ = ["__version__"]
 

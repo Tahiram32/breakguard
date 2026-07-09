@@ -71,7 +71,7 @@ def format_markdown(report: dict[str, Any]) -> str:
     label = _SEVERITY_LABEL.get(risk, risk)
 
     lines: list[str] = [
-        "## 📡 Downstream Breakage Radar",
+        "## 📡 BreakGuard",
         "",
         f"**Risk level:** {emoji} {label}  ",
         f"**Changed files:** {report['change_count']}  ",
@@ -104,7 +104,7 @@ def format_markdown(report: dict[str, Any]) -> str:
     lines += [
         "",
         "---",
-        "💡 *Downstream Breakage Radar is free and open-source. If it helped protect your release, consider [sponsoring @Tahiram32 on GitHub](https://github.com/sponsors/Tahiram32)!*"
+        "💡 *BreakGuard is free and open-source. If it helped protect your release, consider [sponsoring @Tahiram32 on GitHub](https://github.com/sponsors/Tahiram32)!*"
     ]
 
     return "\n".join(lines)
@@ -242,7 +242,7 @@ def format_sarif(report: dict[str, Any]) -> str:
             {
                 "tool": {
                     "driver": {
-                        "name": "Downstream Breakage Radar",
+                        "name": "BreakGuard",
                         "informationUri": "https://github.com/Tahiram32/breakguard",
                         "rules": rules
                     }

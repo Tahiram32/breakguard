@@ -1,6 +1,6 @@
-"""Configuration parsing for Downstream Breakage Radar.
+"""Configuration parsing for BreakGuard.
 
-Parses configuration from pyproject.toml or breakage-radar.json.
+Parses configuration from pyproject.toml or breakguard.json.
 """
 
 from __future__ import annotations
@@ -23,8 +23,8 @@ def parse_config(repo_path: Path) -> dict:
     if pyproject.exists():
         try:
             content = pyproject.read_text(encoding="utf-8")
-            # Extract [tool.breakage-radar] block
-            match = re.search(r'(?s)\[tool\.breakage-radar\](.*?)(?:^\[|\Z)', content)
+            # Extract [tool.breakguard] block
+            match = re.search(r'(?s)\[tool\.breakguard\](.*?)(?:^\[|\Z)', content)
             if match:
                 block = match.group(1)
                 
@@ -59,8 +59,8 @@ def parse_config(repo_path: Path) -> dict:
         except Exception:
             pass
 
-    # 2. Try breakage-radar.json
-    br_json = repo_path / "breakage-radar.json"
+    # 2. Try breakguard.json
+    br_json = repo_path / "breakguard.json"
     if br_json.exists():
         try:
             data = json.loads(br_json.read_text(encoding="utf-8"))

@@ -15,7 +15,7 @@ def run():
         sys.exit(0)
         
     choice = choice.strip()
-    cmd = ["breakage-radar", "--repo", "."]
+    cmd = ["breakguard", "--repo", "."]
     
     if choice == '1':
         print("\nScanning for breakages...\n")
