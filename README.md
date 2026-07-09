@@ -23,7 +23,14 @@ Every library maintainer has lived this nightmare: you merge a PR, cut a release
 
 No external dependencies. No complex setup. Just add it to your workflow and ship with confidence.
 
-## ✨ Features
+## 🚀 The BreakGuard Magic (New in v1.0!)
+
+- 🤖 **AI Auto-Fix Downstream:** Break an API? Run `breakguard --auto-fix-downstream`. BreakGuard will automatically use AI to rewrite the outdated function calls in all of your downstream dependencies and open PRs to fix their code for them.
+- 🎨 **Visual Dependency Graphs:** Run `breakguard --format html` to instantly generate an interactive Mermaid.js diagram showing exactly which downstream apps you just broke (in red) and which are safe (in green).
+- 🪄 **The "No-Code" Wizard:** Hate memorizing CLI flags? Just type `breakguard` in your terminal to open a beautiful, arrow-key driven interactive menu.
+- 💎 **Native GitHub UI Integration:** When run as a GitHub Action, it automatically generates a massive, colorful Markdown report directly inside `$GITHUB_STEP_SUMMARY` for every Pull Request.
+
+## ✨ Core Features
 
 - 🔍 **Automatic surface detection** — flags changes to `src/`, `lib/`, `api/`, `schemas/`, `proto/`, OpenAPI specs, and more
 - 📦 **Package manifest awareness** — catches edits to `pyproject.toml`, `package.json`, `Cargo.toml`, `go.mod`, `pom.xml`, etc.
@@ -77,14 +84,20 @@ jobs:
 # Install from PyPI
 pip install breakguard
 
-# Scan the current repo against origin/main
-breakage-radar --repo . --base origin/main
+# Launch the interactive "No-Code" Wizard
+breakguard
 
-# Get JSON output for CI tooling
-breakage-radar --repo . --base origin/main --format json
+# Auto-Fix downstream repositories using AI
+breakguard --repo . --auto-fix-downstream
+
+# Generate an interactive HTML Visual Dependency Graph
+breakguard --repo . --format html
+
+# Scan the current repo against origin/main
+breakguard --repo . --base origin/main
 
 # Generate an API changelog
-breakage-radar --repo . --base origin/main --changelog
+breakguard --repo . --base origin/main --changelog
 
 # Export SARIF for GitHub Code Scanning
 breakage-radar --repo . --base origin/main --format sarif > results.sarif
