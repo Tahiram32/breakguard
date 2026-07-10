@@ -70,7 +70,7 @@ jobs:
           fetch-depth: 0
 
       - name: Scan for breaking changes
-        uses: Tahiram32/breakguard@v0.5.0
+        uses: Tahiram32/breakguard@v1.0.0
         with:
           base-ref: origin/main
           format: markdown

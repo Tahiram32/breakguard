@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "breakguard"
-version = "0.5.0"
+version = "1.0.0"
 description = "A GitHub Action and CLI that detects breaking changes before release and generates plain English migration notes"
 readme = "README.md"
 requires-python = ">=3.10"
